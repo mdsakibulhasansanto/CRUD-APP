@@ -12,7 +12,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Image.network(
-          product.image ?? '',
+        product.imageUrl,
         height: 100,
         width: 80,fit: BoxFit.fitHeight,
       ),
@@ -27,7 +27,19 @@ class ProductItem extends StatelessWidget {
       subtitle:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text( 'Code : ${product.productCode}',
+          Text( 'Product price : ${product.productPrice}',
+            style: const TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.normal,
+              fontStyle: FontStyle.italic,
+            ),
+
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.start,
+          ),
+          Text(
+            'Total price : ${product.totalPrice}',
             style: const TextStyle(
               color: Colors.grey,
               fontWeight: FontWeight.normal,
@@ -45,21 +57,9 @@ class ProductItem extends StatelessWidget {
               fontWeight: FontWeight.normal,
               fontStyle: FontStyle.italic,
             ),
-
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.start,
           ),
           Text(
-            'Unit price : ${product.unitPrice}',
-            style: const TextStyle(
-              color: Colors.grey,
-              fontWeight: FontWeight.normal,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-          Text(
-            'Total price : ${product.totalPrice}',
+            'Date : ${product.date}',
             style: const TextStyle(
               color: Colors.grey,
               fontWeight: FontWeight.normal,

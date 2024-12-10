@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class AddProduct extends StatefulWidget {
   const AddProduct({super.key});
   static const String name = '/addProductState';
+
   @override
   State<StatefulWidget> createState() {
     return AddProductState();
@@ -10,15 +13,15 @@ class AddProduct extends StatefulWidget {
 }
 
 class AddProductState extends State<AddProduct> {
-  final TextEditingController _nameTextController = TextEditingController();
-  final TextEditingController _priceTextController = TextEditingController();
-  final TextEditingController _totalPriceTEController = TextEditingController();
-  final TextEditingController _quantityTextController = TextEditingController();
-  final TextEditingController _codeTextController = TextEditingController();
-  final TextEditingController _imageTextController = TextEditingController();
-  @override
-
+  final String apiUrl = "http://mdsakibulhasansanto.com/crud_database/data_add.php";
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _productPrice = TextEditingController();
+  final TextEditingController _totalPrice = TextEditingController();
+  final TextEditingController _quantity = TextEditingController();
+  final TextEditingController _imageUrl = TextEditingController();
+  final TextEditingController _date = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _addNewProductInProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,236 +29,130 @@ class AddProductState extends State<AddProduct> {
       appBar: AppBar(title: const Text('Add Product')),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(20),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
-                // Name field
-                TextFormField(
-                  controller: _nameTextController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    labelStyle: const TextStyle(color: Colors.black26, fontWeight: FontWeight.bold),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.green, width: 1),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.amber, width: 1),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value?.trim().isEmpty ?? true) {
-                      return 'Enter product name';
-                    }
-                    return null;
-                  },
-                ),
+                buildTextField(_name, 'Name', 'Enter product name'),
                 const SizedBox(height: 15),
-                // Price field
-                TextFormField(
-                  controller: _priceTextController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(
-                    labelText: 'Product Price',
-                    labelStyle: const TextStyle(color: Colors.black26, fontWeight: FontWeight.bold),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.green, width: 1),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.amber, width: 1),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value?.trim().isEmpty ?? true) {
-                      return 'Enter product price';
-                    }
-                    return null;
-                  },
-                ),
+                buildTextField(_productPrice, 'Product Price', 'Enter product price', TextInputType.number),
                 const SizedBox(height: 15),
-                // TotalPrice field
-                TextFormField(
-                  controller: _totalPriceTEController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(
-                    labelText: 'Total Price',
-                    labelStyle: const TextStyle(color: Colors.black26, fontWeight: FontWeight.bold),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.green, width: 1),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.amber, width: 1),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value?.trim().isEmpty ?? true) {
-                      return 'Enter product total price';
-                    }
-                    return null;
-                  },
-                ),
+                buildTextField(_totalPrice, 'Total Price', 'Enter total price', TextInputType.number),
                 const SizedBox(height: 15),
-                // Quantity field
-                TextFormField(
-                  controller: _quantityTextController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(
-                    labelText: 'Quantity',
-                    labelStyle: const TextStyle(color: Colors.black26, fontWeight: FontWeight.bold),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.green, width: 1),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.amber, width: 1),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value?.trim().isEmpty ?? true) {
-                      return 'Enter product quantity';
-                    }
-                    return null;
-                  },
-                ),
+                buildTextField(_quantity, 'Quantity', 'Enter quantity', TextInputType.number),
+                const SizedBox(height: 15),
+                buildTextField(_imageUrl, 'Submit Image url', 'Submit url '),
+                const SizedBox(height: 15),
+                buildTextField(_date, 'Submit date ', 'Submit date'),
                 const SizedBox(height: 20),
-
-                // Code
-                TextFormField(
-                  controller: _codeTextController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(
-                    labelText: 'Code ',
-                    labelStyle: const TextStyle(color: Colors.black26, fontWeight: FontWeight.bold),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.green, width: 1),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.amber, width: 1),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
+                Visibility(
+                  visible: !_addNewProductInProgress,
+                  replacement: const Center(
+                    child: CircularProgressIndicator(),
                   ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value?.trim().isEmpty ?? true) {
-                      return 'Enter product code ';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        addProduct();
+                      }
+                    },
 
-                TextFormField(
-                  controller: _imageTextController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(
-                    labelText: 'Image',
-                    labelStyle: const TextStyle(color: Colors.black26, fontWeight: FontWeight.bold),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.green, width: 1),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.amber, width: 1),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                    ),
+                    child: const Text('Add Product'),
                   ),
-                  keyboardType: TextInputType.name,
-                  validator: (value) {
-                    if (value?.trim().isEmpty ?? true) {
-                      return 'Enter product image ';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-
-
-                // Save Button
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      // Proceed with saving the product
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.lightGreen),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),
-                    child: Text(
-                      'Save product',
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
+                )
               ],
             ),
           ),
         ),
       ),
     );
+  }
 
-    void display (){
+  TextFormField buildTextField(TextEditingController controller, String label, String errorText, [TextInputType? keyboardType]) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType ?? TextInputType.text,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black26, fontWeight: FontWeight.bold),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.green, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.amber, width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.red, width: 1),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.red, width: 1),
+        ),
+      ),
+      validator: (value) {
+        if (value?.trim().isEmpty ?? true) {
+          return errorText;
+        }
+        return null;
+      },
+    );
+  }
 
+  Future<void> addProduct() async {
+    setState(() {
+      _addNewProductInProgress = true; // Show loader
+    });
+
+    final Uri url = Uri.parse(
+        "$apiUrl?n=${_name.text.trim()}&p_p=${_productPrice.text.trim()}&t_p=${_totalPrice.text.trim()}&qu=${_quantity.text.trim()}&url=${_imageUrl.text.trim()}&da=${_date.text.trim()}");
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        _clearTextFields();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Product added successfully: ${response.body}")),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to add product: ${response.statusCode}")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error occurred: $e")),
+      );
+    } finally {
+      setState(() {
+        _addNewProductInProgress = false; // Hide loader
+      });
     }
   }
+
+  void _clearTextFields() {
+    _name.clear();
+    _productPrice.clear();
+    _totalPrice.clear();
+    _quantity.clear();
+    _imageUrl.clear();
+    _date.clear();
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _productPrice.dispose();
+    _totalPrice.dispose();
+    _quantity.dispose();
+    _imageUrl.dispose();
+    _date.dispose();
+    super.dispose();
+  }
 }
+

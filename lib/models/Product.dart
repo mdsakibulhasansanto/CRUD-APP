@@ -1,28 +1,26 @@
-
-
 class Product {
-  String? id;
-  String? productName;
-  String? productCode;
-  String? image;
-  String? unitPrice;
-  String? quantity;
-  String? totalPrice;
-  String? createdDate;
+  String id;
+  String name;
+  String productPrice;
+  String totalPrice;
+  String quantity;
+  String imageUrl;
+  String date;
 
   Product({
-    this.id,
-    this.productName,
-    this.productCode,
-    this.image,
-    this.unitPrice,
-    this.quantity,
-    this.totalPrice,
-    this.createdDate,
+    required this.id,
+    required this.name,
+    required this.productPrice,
+    required this.totalPrice,
+    required this.quantity,
+    required this.imageUrl,
+    required this.date,
   });
-
-  String? get name => productName;
-
 
 
 }
+
+
+
+
+

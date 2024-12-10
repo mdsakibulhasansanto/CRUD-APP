@@ -1,27 +1,23 @@
 import 'dart:convert';
-
-import 'package:crud/ui/screens/AddProduct.dart';
 import 'package:flutter/material.dart';
-import 'package:crud/ui/screens/AddProduct.dart';
-import 'package:crud/ui/screens/TabItemBar.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:crud/models/Product.dart';
-
+import 'package:http/http.dart';
 import '../widgets/ProductItem.dart';
 import '../widgets/TabItem.dart';
+import 'AddProduct.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
   State<StatefulWidget> createState() => HomePageState();
-
-
 }
 
 class HomePageState extends State<HomePage> {
   List<Product> productList = [];
   bool _getProductListInProgress = false;
+
   @override
   void initState() {
     super.initState();
@@ -30,22 +26,21 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return   DefaultTabController(
+    return DefaultTabController(
       length: 2,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           title: const Text(
-            'CRUD App ',
-            style: TextStyle(fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-
+            'CRUD App',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
           ),
           centerTitle: true,
-
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(50),
             child: Container(
@@ -70,7 +65,7 @@ class HomePageState extends State<HomePage> {
                   labelColor: Colors.amber,
                   unselectedLabelColor: Colors.black54,
                   tabs: [
-                    TabItem(title: 'Iphone List ', count: 1),
+                    TabItem(title: 'Iphone List', count: 1),
                     TabItem(title: 'Android List', count: 2),
                     // TabItem(title: 'Deleted', count: 1),
                   ],
@@ -79,84 +74,100 @@ class HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        body:  TabBarView(
+        body: TabBarView(
           children: [
-            Visibility(
-              visible: _getProductListInProgress == false,
-              replacement: const Center(
-                child: CircularProgressIndicator(),
-              ), child:  ListView.separated(
-              itemCount: productList.length ,
-              itemBuilder: (context, index) {
-                return ProductItem(
-                  product: productList[index],
-                );
+            RefreshIndicator(
+              onRefresh: () async {
+                _getProductList();
               },
-              separatorBuilder: (context, index) {
-                return const Divider(
-                  thickness: 0.5,
-                  color: Colors.grey,
-                  indent: 10,
-                  endIndent: 10,
-                );
-              },
-            ),
+              child:  Visibility(
+                visible: !_getProductListInProgress,
+                replacement: const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.green,
+                  ),
+                ),
+                child: ListView.separated(
+                  itemCount: productList.length,
+                  itemBuilder: (context, index) {
+                    return ProductItem(
+                      product: productList[index],
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const Divider(
+                      thickness: 0.5,
+                      color: Colors.grey,
+                      indent: 10,
+                      endIndent: 10,
+                    );
+                  },
+                ),
+              ),
+              color: Colors.green,
+              backgroundColor: Colors.white,
 
             ),
-           const Center(child:
-            const Text(
-                'No found data ',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.bold
-            ),),)
+
+            const Center(
+              child: Text(
+                'No found data',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
-            onPressed: (){
-              Navigator.pushNamed(context, AddProduct.name);
-            },
+          onPressed: () {
+            Navigator.pushNamed(context, AddProduct.name);
+          },
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           backgroundColor: Colors.lightGreen,
           child: const Icon(Icons.add),
-
-
         ),
       ),
     );
   }
-
   Future<void> _getProductList() async {
     _getProductListInProgress = true;
     setState(() {});
-    Uri uri = Uri.parse('https://mdsakibulhasansanto.com/crud_display.json');
+    Uri uri = Uri.parse('https://mdsakibulhasansanto.com/crud_database/data_get.php');
     Response response = await get(uri);
-    print(response.statusCode);
-    print(response.body);
+
     if (response.statusCode == 200) {
-      final decodedData = jsonDecode(response.body);
-      print(decodedData['status']);
-      for (Map<String, dynamic> p in decodedData['data']) {
-        Product product = Product(
-          id: p['_id'],
-          productName: p['ProductName'],
-          productCode: p['ProductCode'],
-          quantity: p['Qty'],
-          unitPrice: p['UnitPrice'],
-          image: p['Img'],
-          totalPrice: p['TotalPrice'],
-          createdDate: p['CreatedDate'],
-        );
-        productList.add(product);
+      try {
+        final List<dynamic> decodedData = jsonDecode(response.body);
+        print(decodedData);
+
+        productList.clear();
+        for (var item in decodedData) {
+          Product product = Product(
+            id: item['id'] ?? '',
+            name: item['name'] ?? 'Unknown',
+            productPrice: item['productPrice'] ?? '0',
+            totalPrice: item['totalPrice'] ?? '0',
+            quantity: item['quantity'] ?? '0',
+            imageUrl: item['imageUrl'] ?? '',
+            date: item['date'] ?? '',
+          );
+          productList.add(product);
+        }
+
+        setState(() {});
+      } catch (e) {
+        print("JSON parsing error: $e");
       }
-      setState(() {});
+    } else {
+      print("Failed to fetch data. Status code: ${response.statusCode}");
     }
+
     _getProductListInProgress = false;
     setState(() {});
   }
 
 
-
 }
-
