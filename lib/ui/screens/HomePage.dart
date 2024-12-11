@@ -17,6 +17,8 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   List<Product> productList = [];
   bool _getProductListInProgress = false;
+  late final Product product;
+  final String delete_apiUrl = "http://mdsakibulhasansanto.com/crud_database/data_delete.php";
 
   @override
   void initState() {
@@ -80,9 +82,11 @@ class HomePageState extends State<HomePage> {
               onRefresh: () async {
                 _getProductList();
               },
+              color: Colors.green,
+              backgroundColor: Colors.white,
               child:  Visibility(
                 visible: !_getProductListInProgress,
-                replacement: const Center(
+                replacement:  const Center(
                   child: CircularProgressIndicator(
                     color: Colors.green,
                   ),
@@ -104,8 +108,6 @@ class HomePageState extends State<HomePage> {
                   },
                 ),
               ),
-              color: Colors.green,
-              backgroundColor: Colors.white,
 
             ),
 
@@ -168,6 +170,7 @@ class HomePageState extends State<HomePage> {
     _getProductListInProgress = false;
     setState(() {});
   }
+
 
 
 }

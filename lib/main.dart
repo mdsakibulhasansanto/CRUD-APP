@@ -1,4 +1,5 @@
 import 'package:crud/ui/screens/AddProduct.dart';
+import 'package:crud/ui/screens/UpdateProduct.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'ui/screens/HomePage.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/' : (context) => HomePage(),
         AddProduct.name : (context) => AddProduct(),
+        UpdateProduct.name : (context) => UpdateProduct(),
 
       },
     );
