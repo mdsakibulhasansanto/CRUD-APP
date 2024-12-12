@@ -235,11 +235,10 @@ class AddProductState extends State<TabItemBar> {
                 const SizedBox(height: 20),
 
 
-                // Save Button
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState?.validate() ?? false) {
-                      // Proceed with saving the product
+
                     }
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.lightGreen),

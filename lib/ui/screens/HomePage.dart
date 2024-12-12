@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:crud/models/Product.dart';
 import 'package:http/http.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+
   List<Product> productList = [];
   bool _getProductListInProgress = false;
   late final Product product;
@@ -24,7 +26,10 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _getProductList();
+
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +54,7 @@ class HomePageState extends State<HomePage> {
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
-              margin: EdgeInsets.only(bottom: 15),
+              margin: const EdgeInsets.only(bottom: 15),
               child: Container(
                 height: 40,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -69,7 +74,6 @@ class HomePageState extends State<HomePage> {
                   tabs: [
                     TabItem(title: 'Iphone List', count: 1),
                     TabItem(title: 'Android List', count: 2),
-                    // TabItem(title: 'Deleted', count: 1),
                   ],
                 ),
               ),
@@ -94,6 +98,7 @@ class HomePageState extends State<HomePage> {
                 child: ListView.separated(
                   itemCount: productList.length,
                   itemBuilder: (context, index) {
+                    // Widget set
                     return ProductItem(
                       product: productList[index],
                     );
@@ -164,7 +169,7 @@ class HomePageState extends State<HomePage> {
         print("JSON parsing error: $e");
       }
     } else {
-      print("Failed to fetch data. Status code: ${response.statusCode}");
+      print("Failed to fetch data. Status code");
     }
 
     _getProductListInProgress = false;

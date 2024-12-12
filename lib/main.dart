@@ -8,6 +8,7 @@ void main() {
   runApp( DevicePreview(
     builder: (context) => MyApp(),
   )
+
   );
 
 }
@@ -17,6 +18,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  MaterialApp(
       title: 'CRUd app',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {

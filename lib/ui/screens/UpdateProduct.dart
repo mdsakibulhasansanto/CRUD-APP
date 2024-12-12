@@ -41,7 +41,13 @@ class UpdateProductState extends State<UpdateProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:  Text('Update Product$id')),
+      appBar: AppBar(title:  const Text(
+          'Update Product',
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold
+        ),
+      )),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -60,11 +66,14 @@ class UpdateProductState extends State<UpdateProduct> {
                 buildTextField(_imageUrl, 'Submit Image url', 'Submit url '),
                 const SizedBox(height: 15),
                 buildTextField(_date, 'Submit date ', 'Submit date'),
-                const SizedBox(height: 20),
+                const SizedBox(height: 70),
                 Visibility(
                   visible: !_addNewProductInProgress,
                   replacement: const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: Colors.green,
+                      backgroundColor: Colors.white,
+                    ),
                   ),
                   child: ElevatedButton(
                     onPressed: () {
@@ -72,8 +81,17 @@ class UpdateProductState extends State<UpdateProduct> {
                         addProduct();
                       }
                     },
-
-                    child: const Text('Add Product'),
+                    style:ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(horizontal: 70,vertical: 10)
+                    ) ,
+                    child: const  Text(
+                      'Update Product',
+                      style: TextStyle(
+                          color: Colors.black54,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
                   ),
                 )
               ],
@@ -132,11 +150,11 @@ class UpdateProductState extends State<UpdateProduct> {
       if (response.statusCode == 200) {
         _clearTextFields();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Product added successfully: ${response.body}")),
+          const SnackBar(content: Text("Product update successfully")),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Failed to add product: ${response.statusCode}")),
+          const SnackBar(content: Text("Failed to add product")),
         );
       }
     } catch (e) {
@@ -145,7 +163,7 @@ class UpdateProductState extends State<UpdateProduct> {
       );
     } finally {
       setState(() {
-        _addNewProductInProgress = false; // Hide loader
+        _addNewProductInProgress = false;
       });
     }
   }
